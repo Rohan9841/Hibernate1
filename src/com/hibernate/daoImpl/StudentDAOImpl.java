@@ -61,21 +61,40 @@ public class StudentDAOImpl implements StudentDAO{
 
 	@Override
 	public boolean removeStudent(long sId) {
-		Session session = HibernateUtility.getSession();
-		Transaction transaction = session.beginTransaction();
-		
-		Student student = (Student)session.get(Student.class, sId);
-		
-		if(student != null) {
-			Laptop laptop = student.getLaptop();
-			student.removeLaptop(laptop);
-			student.removeAllCourses();
-//			session.saveOrUpdate(student);
-			session.delete(student);
-			transaction.commit();
-			return true;
+		Transaction transaction = null;
+		try {
+			Session session = HibernateUtility.getSession();
+			transaction = session.beginTransaction();
+			
+			Student student = (Student)session.get(Student.class, sId);
+			
+			if(student != null) {
+				student.removeLaptop();
+				student.removeAllCourses();
+				student.setDepartment(null);
+				session.delete(student);
+				transaction.commit();
+				return true;
+			}
+			return false;
+		}catch(Exception ex) {
+			if(transaction != null) {
+				transaction.rollback();
+			}
+			ex.printStackTrace();
+			return false;
 		}
-		return false;
+		
 	}
+
+	@Override
+	public void updateStudent(Student student) {
+		Session session = HibernateUtility.getSession();
+		session.getTransaction().begin();
+		session.update(student);
+		session.getTransaction().commit();
+	}
+	
+	
 
 }

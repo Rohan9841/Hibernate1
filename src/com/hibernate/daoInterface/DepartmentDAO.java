@@ -11,4 +11,5 @@ public interface DepartmentDAO {
 	public Department getDepartmentInfo(long depId);
 	public List<Department> getAllDepartments();
 	public boolean removeDepartment(long depId);
+	public void updateDepartment(Department department);
 }

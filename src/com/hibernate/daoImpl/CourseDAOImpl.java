@@ -1,12 +1,14 @@
 package com.hibernate.daoImpl;
 
 import java.util.List;
+import java.util.Set;
 
 import org.hibernate.Session;
 import org.hibernate.Transaction;
 
 import com.hibernate.daoInterface.CourseDAO;
 import com.hibernate.model.Course;
+import com.hibernate.model.Student;
 import com.hibernate.utility.HibernateUtility;
 
 public class CourseDAOImpl implements CourseDAO {
@@ -27,8 +29,9 @@ public class CourseDAOImpl implements CourseDAO {
 
 	@Override
 	public Course getCourseInfo(long courseId) {
-		// TODO Auto-generated method stub
-		return null;
+		Session session = HibernateUtility.getSession();
+		Course course = (Course) session.load(Course.class, courseId);
+		return(course!=null)?course:null;
 	}
 
 	@Override
@@ -39,7 +42,17 @@ public class CourseDAOImpl implements CourseDAO {
 
 	@Override
 	public boolean removeCourse(long courseId) {
-		// TODO Auto-generated method stub
+		Session session = HibernateUtility.getSession();
+		Transaction transaction = session.beginTransaction();
+		
+		Course course = (Course)session.get(Course.class, courseId);
+		
+		if(course != null) {
+			course.removeAllStudents();
+			session.delete(course);
+			transaction.commit();
+			return true;
+		}
 		return false;
 	}
 

@@ -10,6 +10,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
@@ -28,8 +29,8 @@ public class Student {
 	@OneToOne(
 			mappedBy = "student",
 			cascade = CascadeType.ALL,
-			fetch = FetchType.LAZY
-//			orphanRemoval = true
+			fetch = FetchType.LAZY,
+			orphanRemoval = true
 //			optional = false
 			)
 	private Laptop laptop;
@@ -46,9 +47,13 @@ public class Student {
 					CascadeType.PERSIST,
 					CascadeType.MERGE
 			},
-			mappedBy = "students",
 			fetch = FetchType.LAZY
 			)
+	@JoinTable(
+			name = "student_course",
+			joinColumns = { @JoinColumn(name = "sId")},
+			inverseJoinColumns = { @JoinColumn(name = "courseId")}
+	)
 	private Set<Course> courses = new HashSet<>();
 	
 	public Student() {
@@ -61,6 +66,13 @@ public class Student {
 		this.marks = marks;
 	}
 	
+
+	public Student(long sId, String name, int marks) {
+		super();
+		this.sId = sId;
+		this.name = name;
+		this.marks = marks;
+	}
 
 	public void addCourse(Course course) {
 		this.courses.add(course);
@@ -112,9 +124,9 @@ public class Student {
 	
 	
 	//removes the laptop from this class and sets the student to null in Laptop class
-	public void removeLaptop(Laptop laptop) {
-		if(laptop != null) {
-			laptop.setStudent(null);
+	public void removeLaptop() {
+		if(this.laptop != null) {
+			this.laptop.setStudent(null);
 		}
 		this.laptop = null;
 	}

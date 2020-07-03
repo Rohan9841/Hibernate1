@@ -27,12 +27,10 @@ public class Course {
 	@NaturalId
 	private String name;
 
-	@ManyToMany(fetch = FetchType.LAZY)
-	@JoinTable(
-			name = "Course_student",
-			joinColumns = { @JoinColumn(name = "sId")},
-			inverseJoinColumns = { @JoinColumn(name = "courseId")}
-	)
+	@ManyToMany(
+			mappedBy = "courses",
+			fetch = FetchType.LAZY
+			)
 	private Set<Student> students = new HashSet<>();
 	
 	
@@ -62,6 +60,13 @@ public class Course {
 		this.students = students;
 	}
 
+	public void removeAllStudents() {
+		for(Student student : this.students) {
+			student.getCourses().remove(this);
+		}
+		this.students = null;
+	}
+	
 	public String getName() {
 		return name;
 	}

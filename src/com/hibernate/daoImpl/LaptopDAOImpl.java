@@ -62,7 +62,8 @@ public class LaptopDAOImpl implements LaptopDAO {
 		Laptop laptop = (Laptop)session.get(Laptop.class, lapId);
 		
 		if(laptop != null) {
-			session.delete(laptop);
+			laptop.getStudent().removeLaptop();
+//			session.delete(laptop);
 			transaction.commit();
 			return true;
 		}

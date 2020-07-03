@@ -43,7 +43,7 @@ public class Department {
 		this.name = name;
 		this.students = students;
 	}
-	
+
 	public void addStudent(Student student) {
 		students.add(student);
 		student.setDepartment(this);
@@ -54,6 +54,12 @@ public class Department {
 		student.setDepartment(null);
 	}
 	
+	public void removeAllStudents() {
+		for(Student student : this.students) {
+			student.setDepartment(null);
+		}
+		this.students = null;
+	}
 	public List<Student> getStudent() {
 		return students;
 	}

@@ -7,11 +7,13 @@ import org.hibernate.Session;
 import org.hibernate.Transaction;
 
 import com.hibernate.daoInterface.DepartmentDAO;
+import com.hibernate.daoInterface.StudentDAO;
 import com.hibernate.model.Department;
 import com.hibernate.utility.HibernateUtility;
 
 public class DepartmentDAOImpl implements DepartmentDAO {
 
+	StudentDAO sDao = new StudentDAOImpl();
 	@Override
 	public void insertDepartment(Department department) {
 		Session session = HibernateUtility.getSession();
@@ -39,7 +41,6 @@ public class DepartmentDAOImpl implements DepartmentDAO {
 	@Override
 	public Department getDepartmentInfo(long depId) {
 		Session session = HibernateUtility.getSession();
-		Transaction transaction = session.beginTransaction();
 		Department department = (Department) session.load(Department.class, depId);
 		return(department!=null)?department:null;
 	}
@@ -63,11 +64,22 @@ public class DepartmentDAOImpl implements DepartmentDAO {
 		Department department = (Department)session.get(Department.class, depId);
 		
 		if(department != null) {
+			department.removeAllStudents();
 			session.delete(department);
 			transaction.commit();
 			return true;
 		}
 		return false;
 	}
+
+	@Override
+	public void updateDepartment(Department department) {
+		Session session = HibernateUtility.getSession();
+		Transaction transaction = session.beginTransaction();
+		session.update(department);
+		transaction.commit();
+	}
+	
+	
 
 }
